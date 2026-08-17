@@ -1,0 +1,51 @@
+name: CI
+
+# Déclenché sur la branche par défaut du dépôt (main) et sur toute pull
+# request qui la cible.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Droits minimaux : lecture du code, plus écriture des checks et des
+# commentaires de PR pour que le rapport de tests puisse être publié.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  build:
+    name: Compilation et tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Installation du JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Lancé depuis la racine : le reactor compile bank-core ET bank-swing,
+      # y compris les modules sans tests.
+      - name: Compilation de tous les modules
+        run: mvn -B clean compile
+
+      # Également lancé au niveau du pom parent : la commande restera valable
+      # le jour où bank-swing aura ses propres tests.
+      - name: Exécution des tests
+        run: mvn -B test
+
+      # success() || failure() = on publie le rapport même quand des tests
+      # échouent (c'est justement là qu'il sert), mais pas si le job est annulé.
+      - name: Publication du rapport de tests
+        if: success() || failure()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: '**/target/surefire-reports/TEST-*.xml'
+          check_name: Résultats des tests JUnit
