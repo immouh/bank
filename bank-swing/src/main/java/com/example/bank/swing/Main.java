@@ -5,6 +5,7 @@ import com.example.bank.core.repository.ClientRepository;
 import com.example.bank.core.repository.InMemoryClientRepository;
 import com.example.bank.core.service.AuthService;
 import com.example.bank.core.service.BanqueService;
+import com.example.bank.core.service.commande.InvocateurCommande;
 import com.example.bank.swing.controller.CompteController;
 import com.example.bank.swing.controller.LoginController;
 import com.example.bank.swing.controller.VirementController;
@@ -28,9 +29,15 @@ public class Main {
 
         chargerDonneesDeDemonstration(banqueService, repository);
 
+        // Un seul invocateur pour toute l'application : le journal des
+        // commandes exécutées est ainsi commun aux opérations de compte et
+        // aux virements.
+        InvocateurCommande invocateur = new InvocateurCommande();
+
         LoginController loginController = new LoginController(authService);
-        CompteController compteController = new CompteController(banqueService);
-        VirementController virementController = new VirementController(banqueService, repository);
+        CompteController compteController = new CompteController(banqueService, invocateur);
+        VirementController virementController =
+                new VirementController(banqueService, repository, invocateur);
 
         // Swing doit être construit et manipulé sur l'Event Dispatch Thread.
         SwingUtilities.invokeLater(() ->

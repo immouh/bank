@@ -1,6 +1,7 @@
 package com.example.bank.core.model.offre.pret;
 
 import com.example.bank.core.model.Montants;
+import com.example.bank.core.model.offre.pret.etat.EtatPret;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -9,6 +10,11 @@ import java.math.RoundingMode;
 /**
  * Prêt proposé par une offre. Chaque tier a sa propre implémentation, qui se
  * distingue par son taux nominal annuel et sa durée de remboursement.
+ *
+ * CYCLE DE VIE — le prêt délègue à son {@link EtatPret} courant (patron
+ * State) : en attente, approuvé, en remboursement, puis soldé ou en défaut.
+ * Les implémentations passent par {@link PretBase}, qui tient le montant
+ * emprunté et l'état.
  */
 public interface Pret {
 
@@ -21,8 +27,36 @@ public interface Pret {
     /** Capital emprunté, en euros. */
     BigDecimal getMontantEmprunte();
 
-    /** Mensualité constante, arrondie au centime. */
+    /**
+     * Mensualité constante selon le BARÈME du tier, arrondie au centime.
+     *
+     * Disponible dans tous les états, y compris {@code EnAttente} : c'est une
+     * simulation, et simuler avant d'accorder est précisément ce que fait une
+     * demande de prêt. Pour la mensualité réellement DUE, voir
+     * {@link #mensualiteExigible()}, que l'état filtre.
+     */
     BigDecimal calculerMensualite();
+
+    /** État courant du prêt. */
+    EtatPret getEtat();
+
+    /**
+     * Mensualité exigible de l'emprunteur : le barème, mais seulement à
+     * partir de {@code Approuvé} et jusqu'à la fin du remboursement.
+     */
+    BigDecimal mensualiteExigible();
+
+    /** Transition : la banque accorde le prêt. */
+    void approuver();
+
+    /** Transition : les fonds sont débloqués, l'échéancier démarre. */
+    void demarrerRemboursement();
+
+    /** Transition : dernière échéance payée. État terminal. */
+    void solder();
+
+    /** Transition : constat d'impayé, déclenché manuellement. État terminal. */
+    void declarerDefaut();
 
     /**
      * Formule d'amortissement constant, factorisée pour que les trois prêts

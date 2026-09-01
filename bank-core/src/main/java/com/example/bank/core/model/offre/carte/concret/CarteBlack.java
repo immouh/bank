@@ -1,6 +1,6 @@
 package com.example.bank.core.model.offre.carte.concret;
 
-import com.example.bank.core.model.offre.carte.CarteBancaire;
+import com.example.bank.core.model.offre.carte.CarteBase;
 
 import java.math.BigDecimal;
 
@@ -10,23 +10,16 @@ import java.math.BigDecimal;
  *
  * VALEURS D'EXEMPLE, à ajuster selon la grille tarifaire réelle.
  */
-public class CarteBlack implements CarteBancaire {
+public class CarteBlack extends CarteBase {
 
     private static final BigDecimal PLAFOND_MENSUEL = new BigDecimal("10000.00");
     private static final BigDecimal COTISATION_ANNUELLE = new BigDecimal("300.00");
     /** Garantie propre au tier Premium. */
     private static final boolean ASSURANCE_VOYAGE_INCLUSE = true;
 
-    private boolean active = true;
-
     @Override
     public BigDecimal getPlafond() {
         return PLAFOND_MENSUEL;
-    }
-
-    @Override
-    public boolean estActive() {
-        return active;
     }
 
     public BigDecimal getCotisationAnnuelle() {
@@ -35,13 +28,5 @@ public class CarteBlack implements CarteBancaire {
 
     public boolean aAssuranceVoyage() {
         return ASSURANCE_VOYAGE_INCLUSE;
-    }
-
-    public void bloquer() {
-        active = false;
-    }
-
-    public void activer() {
-        active = true;
     }
 }

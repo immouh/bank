@@ -4,6 +4,8 @@ import com.example.bank.core.exception.ClientIntrouvableException;
 import com.example.bank.core.model.Client;
 import com.example.bank.core.repository.ClientRepository;
 import com.example.bank.core.service.BanqueService;
+import com.example.bank.core.service.commande.InvocateurCommande;
+import com.example.bank.core.service.commande.VirerCommande;
 
 import java.math.BigDecimal;
 
@@ -12,15 +14,22 @@ import java.math.BigDecimal;
  *
  * La fenêtre ne manipule que des RIB (ce que l'utilisateur saisit) : la
  * résolution RIB -> Client se fait ici, jamais dans le code Swing.
+ *
+ * PATRON COMMAND — le virement externe passe par une {@code VirerCommande},
+ * comme le dépôt et le retrait. Le virement vers le Livret A reste un appel
+ * direct : il ne fait pas partie des trois opérations réifiées.
  */
 public class VirementController {
 
     private final BanqueService banqueService;
     private final ClientRepository clientRepository;
+    private final InvocateurCommande invocateur;
 
-    public VirementController(BanqueService banqueService, ClientRepository clientRepository) {
+    public VirementController(BanqueService banqueService, ClientRepository clientRepository,
+                              InvocateurCommande invocateur) {
         this.banqueService = banqueService;
         this.clientRepository = clientRepository;
+        this.invocateur = invocateur;
     }
 
     /** Virement externe : compte courant de l'émetteur -> compte courant du destinataire. */
@@ -28,7 +37,7 @@ public class VirementController {
         Client emetteur = rechercher(emetteurRib);
         Client destinataire = clientRepository.findByRib(destinataireRib)
                 .orElseThrow(() -> new ClientIntrouvableException("Destinataire introuvable."));
-        banqueService.virer(emetteur, destinataire, montant);
+        invocateur.executer(new VirerCommande(banqueService, emetteur, destinataire, montant));
     }
 
     /** Virement interne : compte courant -> Livret A du même client. */
