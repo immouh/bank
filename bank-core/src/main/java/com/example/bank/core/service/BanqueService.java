@@ -1,8 +1,8 @@
 package com.example.bank.core.service;
 
-import com.example.bank.core.exception.ClientIntrouvableException;
-import com.example.bank.core.exception.LivretAAbsentException;
-import com.example.bank.core.exception.VirementVersSoiMemeException;
+import com.example.bank.core.exception.existence.ClientIntrouvableException;
+import com.example.bank.core.exception.existence.LivretAAbsentException;
+import com.example.bank.core.exception.validation.VirementVersSoiMemeException;
 import com.example.bank.core.model.Client;
 import com.example.bank.core.model.Montants;
 import com.example.bank.core.model.Transaction;
@@ -65,7 +65,7 @@ public class BanqueService {
         BigDecimal m = Montants.exigerPositif(montant);
         // Vérifié AVANT le débit : sinon un client sans Livret A verrait son
         // compte débité par une opération qui échoue juste après.
-        if (!client.isLivretAExiste()) {
+        if (client.getLivretA().isEmpty()) {
             throw new LivretAAbsentException();
         }
 
@@ -103,8 +103,11 @@ public class BanqueService {
                 "Virement reçu de " + emetteur.getNom()
                         + " (RIB " + emetteur.getRib() + ")"));
 
-        repository.save(emetteur);
-        repository.save(destinataire);
+        // ATOMICITÉ — une seule écriture pour les deux clients : le débit et le
+        // crédit valident ensemble ou sont annulés ensemble. Deux save
+        // successifs laisseraient, en cas de panne entre les deux, un émetteur
+        // débité et un destinataire jamais crédité.
+        repository.sauvegarderEnsemble(emetteur, destinataire);
     }
 
     /** Relit l'état à jour d'un client depuis le stockage. */

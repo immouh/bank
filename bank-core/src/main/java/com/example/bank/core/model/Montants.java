@@ -1,6 +1,6 @@
 package com.example.bank.core.model;
 
-import com.example.bank.core.exception.MontantInvalideException;
+import com.example.bank.core.exception.validation.MontantInvalideException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

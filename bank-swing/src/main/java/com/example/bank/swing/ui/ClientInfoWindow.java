@@ -1,6 +1,7 @@
 package com.example.bank.swing.ui;
 
 import com.example.bank.core.model.Client;
+import com.example.bank.core.model.offre.compte.Compte;
 import com.example.bank.swing.controller.CompteController;
 import com.example.bank.swing.controller.VirementController;
 
@@ -14,6 +15,10 @@ import java.awt.*;
  * historique) : elle garde une référence au Client et redemande son état au
  * {@link CompteController} après chaque opération. C'est ce qui corrige
  * l'affichage figé après un virement.
+ *
+ * Les soldes sont lus sur les {@link Compte} du client et non plus sur des champs
+ * du Client : la ligne d'épargne apparaît donc dès qu'un Livret A existe,
+ * sans que la fenêtre ait à demander « le livret existe-t-il ? ».
  */
 public class ClientInfoWindow extends JFrame {
 
@@ -26,6 +31,7 @@ public class ClientInfoWindow extends JFrame {
     private final JLabel ribLabel = new JLabel();
     private final JLabel soldeLabel = new JLabel();
     private final JLabel epargneLabel = new JLabel();
+    private final JLabel totalLabel = new JLabel();
 
     public ClientInfoWindow(Client client,
                             CompteController compteController,
@@ -54,6 +60,7 @@ public class ClientInfoWindow extends JFrame {
         panel.add(fermerButton);
         panel.add(virement);
         panel.add(historiqueButton);
+        panel.add(totalLabel);
 
         add(panel, BorderLayout.CENTER);
 
@@ -77,8 +84,21 @@ public class ClientInfoWindow extends JFrame {
     private void afficherEtat() {
         nomLabel.setText("Nom : " + client.getNom());
         ribLabel.setText("RIB : " + client.getRib());
-        soldeLabel.setText("Solde : " + client.getSoldeCompte() + " €");
-        epargneLabel.setText("Epargne  : " + client.getSoldeLivretA() + " €");
-        epargneLabel.setVisible(client.isLivretAExiste());
+
+        Compte compteCourant = client.getCompteCourant();
+        soldeLabel.setText("Solde : " + compteCourant.getSolde() + " €"
+                + " (" + compteCourant.getEtat().libelle() + ")");
+
+        // La ligne d'épargne n'existe à l'écran que si le compte existe.
+        client.getLivretA().ifPresentOrElse(
+                livret -> {
+                    epargneLabel.setText("Epargne  : " + livret.getSolde() + " €");
+                    epargneLabel.setVisible(true);
+                },
+                () -> epargneLabel.setVisible(false));
+
+        // Le total n'a de sens qu'à partir de deux comptes.
+        totalLabel.setText("Total : " + client.soldeTotal() + " €");
+        totalLabel.setVisible(client.getComptes().size() > 1);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.bank.core.model.offre.carte.etat;
 
-import com.example.bank.core.exception.MontantInvalideException;
-import com.example.bank.core.exception.OperationInterditeException;
-import com.example.bank.core.exception.PlafondDepasseException;
+import com.example.bank.core.exception.validation.MontantInvalideException;
+import com.example.bank.core.exception.etat.OperationInterditeException;
+import com.example.bank.core.exception.etat.PlafondDepasseException;
 import com.example.bank.core.model.offre.carte.CarteBancaire;
 import com.example.bank.core.model.offre.carte.concret.CarteBlack;
 import com.example.bank.core.model.offre.carte.concret.CarteJeune;

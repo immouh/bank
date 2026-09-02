@@ -1,7 +1,7 @@
 package com.example.bank.core.model.offre.compte.concret;
 
-import com.example.bank.core.exception.MontantInvalideException;
-import com.example.bank.core.exception.SoldeInsuffisantException;
+import com.example.bank.core.exception.validation.MontantInvalideException;
+import com.example.bank.core.exception.etat.SoldeInsuffisantException;
 import com.example.bank.core.model.offre.compte.Compte;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

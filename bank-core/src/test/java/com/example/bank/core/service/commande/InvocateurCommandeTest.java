@@ -1,6 +1,6 @@
 package com.example.bank.core.service.commande;
 
-import com.example.bank.core.exception.SoldeInsuffisantException;
+import com.example.bank.core.exception.etat.SoldeInsuffisantException;
 import com.example.bank.core.model.Client;
 import com.example.bank.core.repository.ClientRepository;
 import com.example.bank.core.repository.InMemoryClientRepository;

@@ -1,6 +1,6 @@
 package com.example.bank.core.model.offre.pret.concret;
 
-import com.example.bank.core.exception.MontantInvalideException;
+import com.example.bank.core.exception.validation.MontantInvalideException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,7 @@
 package com.example.bank.core.service.commande;
 
+import com.example.bank.core.service.audit.EvenementAudit;
+
 /**
  * Une opération bancaire transformée en objet.
  *
@@ -24,4 +26,17 @@ public interface Commande {
 
     /** Description lisible, pour le journal d'exécution et l'IHM. */
     String libelle();
+
+    /**
+     * RIB du client principalement concerné — celui qui est débité pour un
+     * retrait ou un virement, crédité pour un dépôt.
+     *
+     * Sert au journal d'audit, qui doit pouvoir dire QUI a fait quoi. La
+     * commande est le seul endroit qui le sache sans que l'invocateur ait à
+     * deviner le type d'opération qu'il exécute.
+     */
+    int ribConcerne();
+
+    /** Nature de l'événement à consigner au journal d'audit. */
+    EvenementAudit evenementAudit();
 }

@@ -2,6 +2,7 @@ package com.example.bank.core.service.commande;
 
 import com.example.bank.core.model.Client;
 import com.example.bank.core.service.BanqueService;
+import com.example.bank.core.service.audit.EvenementAudit;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -22,6 +23,16 @@ public class RetirerCommande implements Commande {
     @Override
     public void executer() {
         banqueService.retirer(client, montant);
+    }
+
+    @Override
+    public int ribConcerne() {
+        return client == null ? 0 : client.getRib();
+    }
+
+    @Override
+    public EvenementAudit evenementAudit() {
+        return EvenementAudit.RETRAIT;
     }
 
     @Override

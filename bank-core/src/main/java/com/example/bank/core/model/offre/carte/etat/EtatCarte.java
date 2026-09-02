@@ -1,6 +1,6 @@
 package com.example.bank.core.model.offre.carte.etat;
 
-import com.example.bank.core.exception.OperationInterditeException;
+import com.example.bank.core.exception.etat.OperationInterditeException;
 import com.example.bank.core.model.offre.carte.CarteBancaire;
 
 import java.math.BigDecimal;

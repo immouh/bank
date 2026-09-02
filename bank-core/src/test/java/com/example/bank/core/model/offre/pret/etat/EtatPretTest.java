@@ -1,6 +1,6 @@
 package com.example.bank.core.model.offre.pret.etat;
 
-import com.example.bank.core.exception.OperationInterditeException;
+import com.example.bank.core.exception.etat.OperationInterditeException;
 import com.example.bank.core.model.offre.pret.Pret;
 import com.example.bank.core.model.offre.pret.concret.PretPersonnel;
 import com.example.bank.core.model.offre.pret.etat.concret.PretApprouve;

@@ -20,6 +20,16 @@
             <groupId>com.example</groupId>
             <artifactId>bank-core</artifactId>
         </dependency>
+        <!--
+            Driver H2, nécessaire seulement à l'EXÉCUTION : c'est ici, au
+            point d'assemblage, qu'on choisit la base concrète. Le coeur
+            métier ne compile contre aucun driver.
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

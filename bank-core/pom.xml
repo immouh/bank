@@ -15,13 +15,35 @@
     <packaging>jar</packaging>
 
     <!--
-        Coeur métier : Java pur, aucune dépendance.
-        Ce module ne doit JAMAIS dépendre de Swing, d'un framework web,
-        ni d'une base de données : c'est ce qui le rend testable et
-        réutilisable par n'importe quelle interface (Swing aujourd'hui,
-        REST demain).
+        Coeur métier : Java pur, aucune dépendance de COMPILATION.
+        Ce module ne doit JAMAIS dépendre de Swing ni d'un framework web :
+        c'est ce qui le rend testable et réutilisable par n'importe quelle
+        interface (Swing aujourd'hui, REST demain).
+
+        BASE DE DONNÉES — JdbcClientRepository n'utilise que java.sql, qui
+        vient du JDK : aucun driver n'est nécessaire pour COMPILER le module.
+        H2 n'est là qu'en scope test, pour les tests d'intégration du
+        repository. L'application, elle, embarque le driver au runtime
+        (voir bank-swing). Changer de base demain ne toucherait donc pas
+        au compile classpath du coeur.
+
+        HACHAGE — jbcrypt est la seule dépendance de compilation du module.
+        Elle est assumée : le hachage du mot de passe est une règle du coeur,
+        pas un détail d'affichage, et BCryptHachageStrategy doit vivre à côté
+        de l'authentification. La bibliothèque est du Java pur, sans
+        transitive, et reste derrière l'interface HachageStrategy : en
+        changer ne toucherait qu'une classe.
     -->
     <dependencies>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

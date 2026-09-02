@@ -1,4 +1,4 @@
-package com.example.bank.core.exception;
+package com.example.bank.core.exception.etat;
 
 import java.math.BigDecimal;
 
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * Distincte de {@link SoldeInsuffisantException} : le compte peut être
  * largement approvisionné, c'est la carte qui limite l'opération.
  */
-public class PlafondDepasseException extends BanqueException {
+public class PlafondDepasseException extends ErreurEtatException {
 
     public PlafondDepasseException(BigDecimal plafond, BigDecimal demande) {
         super("Plafond de la carte dépassé : " + demande + " € demandés, "

@@ -1,11 +1,11 @@
-package com.example.bank.core.exception;
+package com.example.bank.core.exception.validation;
 
 /**
  * Virement dont l'émetteur et le destinataire sont le même compte courant.
  * Interdit : cela contournerait la règle « le Livret A s'alimente depuis
  * le compte courant, jamais l'inverse ».
  */
-public class VirementVersSoiMemeException extends BanqueException {
+public class VirementVersSoiMemeException extends ErreurValidationException {
 
     public VirementVersSoiMemeException() {
         super("Impossible de faire un virement vers votre propre compte courant.\n"

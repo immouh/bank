@@ -1,4 +1,4 @@
-package com.example.bank.core.exception;
+package com.example.bank.core.exception.etat;
 
 /**
  * L'état courant d'une entité (compte, carte, prêt) refuse l'opération ou la
@@ -9,7 +9,7 @@ package com.example.bank.core.exception;
  * principe, quel que soit le montant — un compte fermé refuse un dépôt de
  * 1 € comme de 1 000 €.
  */
-public class OperationInterditeException extends BanqueException {
+public class OperationInterditeException extends ErreurEtatException {
 
     public OperationInterditeException(String message) {
         super(message);

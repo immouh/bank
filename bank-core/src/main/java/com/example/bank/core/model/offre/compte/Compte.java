@@ -1,6 +1,6 @@
 package com.example.bank.core.model.offre.compte;
 
-import com.example.bank.core.exception.SoldeInsuffisantException;
+import com.example.bank.core.exception.etat.SoldeInsuffisantException;
 import com.example.bank.core.model.Montants;
 import com.example.bank.core.model.offre.compte.etat.EtatCompte;
 
@@ -36,6 +36,19 @@ public interface Compte {
 
     /** État courant du compte : actif, en découvert, bloqué ou fermé. */
     EtatCompte getEtat();
+
+    /**
+     * Vrai pour un compte d'ÉPARGNE (Livret A aujourd'hui, LDD ou PEL demain),
+     * faux pour un compte courant.
+     *
+     * C'est ce discriminant qui permet à {@code Client} de retrouver son
+     * compte courant et son épargne dans sa liste de comptes SANS connaître
+     * les classes concrètes : ajouter un LDD demain ne demandera pas de
+     * retoucher {@code Client}.
+     */
+    default boolean estEpargne() {
+        return false;
+    }
 
     void crediter(BigDecimal montant);
 

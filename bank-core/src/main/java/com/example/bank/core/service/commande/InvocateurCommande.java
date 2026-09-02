@@ -1,5 +1,8 @@
 package com.example.bank.core.service.commande;
 
+import com.example.bank.core.service.audit.JournalAudit;
+import com.example.bank.core.service.audit.JournalAuditEnMemoire;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +25,21 @@ import java.util.Objects;
 public class InvocateurCommande {
 
     private final List<Commande> journal = new ArrayList<>();
+    private final JournalAudit audit;
+
+    /** Montage sans traçabilité durable : le journal d'audit reste en mémoire. */
+    public InvocateurCommande() {
+        this(new JournalAuditEnMemoire());
+    }
+
+    /**
+     * AUDIT DES OPÉRATIONS — l'invocateur est le point de passage obligé des
+     * dépôts, retraits et virements : c'est donc ici que la trace se pose,
+     * une fois, plutôt que dans chaque commande ou dans le service.
+     */
+    public InvocateurCommande(JournalAudit audit) {
+        this.audit = audit;
+    }
 
     /**
      * Exécute la commande et la journalise si elle aboutit.
@@ -33,6 +51,9 @@ public class InvocateurCommande {
         Objects.requireNonNull(commande, "La commande est obligatoire.");
         commande.executer();
         journal.add(commande);
+        // Après l'exécution seulement : une opération refusée n'a rien fait,
+        // et le journal d'audit ne consigne que ce qui a eu lieu.
+        audit.enregistrer(commande.ribConcerne(), commande.evenementAudit(), commande.libelle());
     }
 
     /** Commandes abouties, dans l'ordre d'exécution. Vue non modifiable. */

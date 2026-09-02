@@ -19,6 +19,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <junit.version>5.9.2</junit.version>
+        <h2.version>2.3.232</h2.version>
+        <jbcrypt.version>0.4</jbcrypt.version>
     </properties>
 
     <dependencyManagement>
@@ -27,6 +29,16 @@
                 <groupId>com.example</groupId>
                 <artifactId>bank-core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mindrot</groupId>
+                <artifactId>jbcrypt</artifactId>
+                <version>${jbcrypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

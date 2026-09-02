@@ -1,8 +1,8 @@
 package com.example.bank.core.service.commande;
 
-import com.example.bank.core.exception.MontantInvalideException;
-import com.example.bank.core.exception.SoldeInsuffisantException;
-import com.example.bank.core.exception.VirementVersSoiMemeException;
+import com.example.bank.core.exception.validation.MontantInvalideException;
+import com.example.bank.core.exception.etat.SoldeInsuffisantException;
+import com.example.bank.core.exception.validation.VirementVersSoiMemeException;
 import com.example.bank.core.model.Client;
 import com.example.bank.core.model.Transaction;
 import com.example.bank.core.repository.ClientRepository;

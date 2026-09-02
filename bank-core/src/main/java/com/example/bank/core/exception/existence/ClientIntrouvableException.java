@@ -1,7 +1,7 @@
-package com.example.bank.core.exception;
+package com.example.bank.core.exception.existence;
 
 /** Aucun client ne correspond au RIB, au nom ou aux identifiants fournis. */
-public class ClientIntrouvableException extends BanqueException {
+public class ClientIntrouvableException extends ErreurExistenceException {
 
     public ClientIntrouvableException(String message) {
         super(message);

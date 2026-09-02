@@ -1,5 +1,6 @@
 package com.example.bank.core.model.offre.pret;
 
+import com.example.bank.core.exception.validation.DureeInvalideException;
 import com.example.bank.core.model.Montants;
 import com.example.bank.core.model.offre.pret.etat.EtatPret;
 
@@ -73,7 +74,7 @@ public interface Pret {
      */
     static BigDecimal mensualite(BigDecimal capital, BigDecimal tauxAnnuel, int dureeMois) {
         if (dureeMois <= 0) {
-            throw new IllegalArgumentException("La durée du prêt doit être strictement positive.");
+            throw new DureeInvalideException("La durée du prêt doit être strictement positive.");
         }
         BigDecimal c = Montants.normaliser(capital);
 

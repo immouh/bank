@@ -14,7 +14,7 @@ Application bancaire de bureau en **Java 21 / Maven multi-module / Swing**, avec
 
 Fonctionnalités qui marchent aujourd'hui : connexion, tableau de bord client, Livret A, virement entre clients (avec traçabilité des deux côtés), historique des transactions.
 
-| | |
+| | |AC
 |---|---|
 | Modules | `bank-core` (métier pur) + `bank-swing` (IHM) |
 | Code source | 56 fichiers Java — 1 861 lignes de main, 1 071 lignes de test |

@@ -1,6 +1,6 @@
 package com.example.bank.swing.controller;
 
-import com.example.bank.core.exception.ClientIntrouvableException;
+import com.example.bank.core.exception.existence.ClientIntrouvableException;
 import com.example.bank.core.model.Client;
 import com.example.bank.core.repository.ClientRepository;
 import com.example.bank.core.service.BanqueService;

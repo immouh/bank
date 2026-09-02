@@ -1,6 +1,6 @@
 package com.example.bank.core.model.offre.carte.etat.concret;
 
-import com.example.bank.core.exception.PlafondDepasseException;
+import com.example.bank.core.exception.etat.PlafondDepasseException;
 import com.example.bank.core.model.Montants;
 import com.example.bank.core.model.offre.carte.CarteBancaire;
 import com.example.bank.core.model.offre.carte.etat.EtatCarte;
