@@ -310,15 +310,29 @@ class BanqueServiceTest {
             assertEquals(avant, mouh.getHistorique().size());
         }
 
-        // TODO Phase A : comportement à vérifier — l'ordre de validation place le
-        // contrôle « virement vers soi-même » AVANT celui du montant. Un virement
-        // vers soi-même d'un montant négatif remonte donc VirementVersSoiMeme, en
-        // taisant que le montant était lui aussi invalide.
+        /**
+         * REFERME LE TODO #4 DE L'AUDIT — CHANGEMENT DE COMPORTEMENT.
+         *
+         * L'ordre de validation plaçait « vers soi-même » AVANT le montant :
+         * un virement vers soi-même d'un montant négatif remontait
+         * {@code VirementVersSoiMemeException} et taisait que le montant était
+         * lui aussi invalide. L'ordre est désormais inverse — le montant est
+         * la règle la plus fondamentale des deux, et celle que l'utilisateur
+         * peut corriger sans rien savoir des destinataires.
+         */
         @Test
-        @DisplayName("Vers soi-même ET avec un montant invalide, c'est le virement vers soi-même qui est signalé")
+        @DisplayName("Vers soi-même ET avec un montant invalide, c'est le montant qui est signalé en premier")
         void ordreDeValidationDuVirement() {
-            assertThrows(VirementVersSoiMemeException.class,
+            assertThrows(MontantInvalideException.class,
                     () -> service.virer(mouh, mouh, new BigDecimal("-100.00")));
+        }
+
+        /** L'inversion ne doit pas avoir masqué la règle métier elle-même. */
+        @Test
+        @DisplayName("Vers soi-même avec un montant valide, c'est toujours le virement vers soi-même qui est signalé")
+        void versSoiMemeAvecMontantValideSignaleToujoursLaRegle() {
+            assertThrows(VirementVersSoiMemeException.class,
+                    () -> service.virer(mouh, mouh, new BigDecimal("100.00")));
         }
 
         /** ATOMICITÉ — le solde de l'émetteur doit être strictement identique avant et après l'échec. */

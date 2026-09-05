@@ -5,46 +5,26 @@ import com.example.bank.core.service.BanqueService;
 import com.example.bank.core.service.audit.EvenementAudit;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /** Dépôt sur le compte courant d'un client. */
-public class DeposerCommande implements Commande {
-
-    private final BanqueService banqueService;
-    private final Client client;
-    private final BigDecimal montant;
+public class DeposerCommande extends OperationSimpleCommande {
 
     public DeposerCommande(BanqueService banqueService, Client client, BigDecimal montant) {
-        this.banqueService = Objects.requireNonNull(banqueService, "Le service est obligatoire.");
-        this.client = client;
-        this.montant = montant;
-    }
-
-    /**
-     * Le montant n'est PAS validé ici : {@code BanqueService.deposer} le fait
-     * déjà, et le valider deux fois laisserait deux règles à maintenir.
-     */
-    @Override
-    public void executer() {
-        banqueService.deposer(client, montant);
+        super(banqueService, client, montant);
     }
 
     @Override
-    public int ribConcerne() {
-        return client == null ? 0 : client.getRib();
+    protected void appliquer(BanqueService service, Client client, BigDecimal montant) {
+        service.deposer(client, montant);
+    }
+
+    @Override
+    protected String verbe() {
+        return "Dépôt";
     }
 
     @Override
     public EvenementAudit evenementAudit() {
         return EvenementAudit.DEPOT;
-    }
-
-    @Override
-    public String libelle() {
-        return "Dépôt de " + montant + " € sur le compte de " + nomClient();
-    }
-
-    private String nomClient() {
-        return client == null ? "?" : client.getNom();
     }
 }

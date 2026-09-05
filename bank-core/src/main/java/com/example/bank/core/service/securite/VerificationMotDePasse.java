@@ -33,16 +33,35 @@ public class VerificationMotDePasse extends EtapeAuthentification {
         if (hache.isPresent()) {
             return hachage.verifier(saisie, hache.get());
         }
-        // PONT DE MIGRATION — aucun haché enregistré pour ce client : on
-        // retombe sur la comparaison portée par le modèle, celle d'avant le
-        // hachage. C'est ce qui permet au stockage en mémoire, encore peuplé
-        // de mots de passe en clair, de continuer à fonctionner tel quel.
+        // PONT DE MIGRATION, TOUJOURS NÉCESSAIRE — aucun haché enregistré
+        // pour ce client : on retombe sur la comparaison portée par le
+        // modèle, celle d'avant le hachage.
         //
-        // Ce repli échoue FERMÉ : sur la base H2, le champ du modèle contient
-        // le haché, et le comparer à une saisie en clair rend toujours faux.
-        // Une panne du répertoire ne laisse donc entrer personne.
+        // LE CAS QUI SUBSISTE, un seul : le montage EN MÉMOIRE, celui du
+        // constructeur à un argument d'{@code AuthService}. Il associe un
+        // {@code InMemoryClientRepository}, dont les clients portent encore
+        // leur mot de passe en clair, à un {@code RepertoireMotsDePasseEnMemoire}
+        // vide — personne ne peut le peupler, car {@code Client} n'expose
+        // aucun accesseur de mot de passe (un test de la phase A l'interdit) :
+        // le clair est illisible depuis l'extérieur, donc impossible à hacher
+        // après coup. Sans ce repli, ce montage ne laisserait entrer personne.
         //
-        // À SUPPRIMER quand tous les magasins seront hachés.
+        // LA BASE H2 NE PASSE PLUS ICI : Main hache à la création et
+        // JdbcRepertoireMotsDePasse rend toujours la colonne d'un client
+        // existant. Il n'y a pas non plus de migration de données en attente —
+        // une base d'avant la phase D se jette, Main le dit.
+        //
+        // Ce repli échoue FERMÉ : là où le champ du modèle contiendrait un
+        // haché, le comparer à une saisie en clair rend toujours faux. Une
+        // panne du répertoire ne laisse donc entrer personne.
+        //
+        // CONDITION DE SUPPRESSION — le jour où plus aucun montage ne laisse
+        // le répertoire vide face à des clients en clair : soit
+        // {@code InMemoryClientRepository} cesse de porter des mots de passe,
+        // soit le constructeur à un argument d'{@code AuthService} disparaît
+        // au profit d'un montage qui remplit lui-même le répertoire. Ce jour-là
+        // ces trois lignes tombent, et {@code correspond} se réduit à
+        // {@code repertoire.hachePour(...).filter(...)}.
         return client.verifierMotDePasse(saisie);
     }
 }

@@ -46,10 +46,7 @@ public class VirerCommande implements Commande {
 
     @Override
     public String libelle() {
-        return "Virement de " + montant + " € de " + nom(emetteur) + " vers " + nom(destinataire);
-    }
-
-    private static String nom(Client client) {
-        return client == null ? "?" : client.getNom();
+        return "Virement de " + montant + " € de " + Libelles.nom(emetteur)
+                + " vers " + Libelles.nom(destinataire);
     }
 }

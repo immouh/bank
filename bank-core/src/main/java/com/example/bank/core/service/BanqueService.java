@@ -88,10 +88,15 @@ public class BanqueService {
         if (destinataire == null) {
             throw new ClientIntrouvableException("Destinataire introuvable.");
         }
+        // LE MONTANT D'ABORD, la règle métier ensuite. Un virement à la fois
+        // vers soi-même ET d'un montant invalide doit signaler le montant :
+        // c'est le défaut le plus fondamental des deux, et celui qu'on peut
+        // corriger sans rien savoir des destinataires. L'ordre inverse taisait
+        // l'erreur de saisie derrière une règle de gestion.
+        BigDecimal m = Montants.exigerPositif(montant);
         if (emetteur.getRib() == destinataire.getRib()) {
             throw new VirementVersSoiMemeException();
         }
-        BigDecimal m = Montants.exigerPositif(montant);
 
         emetteur.debiter(m);        // lève SoldeInsuffisantException avant toute écriture
         destinataire.crediter(m);
