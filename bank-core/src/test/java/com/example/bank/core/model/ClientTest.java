@@ -375,15 +375,40 @@ class ClientTest {
                     () -> client.crediterLivretA(new BigDecimal("100.00")));
         }
 
-        // TODO Phase A : comportement à vérifier — l'ordre de validation fait que
-        // le montant est contrôlé AVANT l'existence du Livret A. Un montant
-        // négatif sur un client sans Livret A remonte donc MontantInvalide et non
-        // LivretAAbsent : le message d'erreur ne pointe pas la cause première.
+        /**
+         * REFERME LE TODO #3 DE L'AUDIT — CHANGEMENT DE COMPORTEMENT.
+         *
+         * L'ordre de validation contrôlait le MONTANT avant l'existence du
+         * Livret A : un montant négatif sur un client sans livret remontait
+         * {@code MontantInvalideException} et taisait la cause première. Le
+         * message d'erreur envoyait alors corriger une saisie, alors qu'aucune
+         * saisie n'aurait pu aboutir alors qu'il n'y a pas de livret à
+         * créditer. L'ordre est désormais inverse — l'absence du livret est le
+         * défaut le plus fondamental des deux.
+         */
         @Test
-        @DisplayName("Sans Livret A ET avec un montant invalide, c'est le montant qui est signalé en premier")
+        @DisplayName("Sans Livret A ET avec un montant invalide, c'est l'absence de livret qui est signalée en premier")
         void ordreDeValidationDuCreditLivretA() {
+            assertThrows(LivretAAbsentException.class,
+                    () -> client.crediterLivretA(new BigDecimal("-100.00")));
+        }
+
+        /** L'inversion ne doit pas avoir masqué la validation du montant. */
+        @Test
+        @DisplayName("Avec un Livret A ouvert, un montant invalide est toujours signalé comme tel")
+        void montantInvalideSurLivretOuvertSignaleToujoursLeMontant() {
+            client.ouvrirLivretA();
+
             assertThrows(MontantInvalideException.class,
                     () -> client.crediterLivretA(new BigDecimal("-100.00")));
+        }
+
+        /** Symétrique du précédent : la règle d'existence tient toujours seule. */
+        @Test
+        @DisplayName("Sans Livret A mais avec un montant valide, c'est toujours l'absence de livret qui est signalée")
+        void montantValideSansLivretSignaleToujoursLAbsence() {
+            assertThrows(LivretAAbsentException.class,
+                    () -> client.crediterLivretA(new BigDecimal("100.00")));
         }
 
         @Test

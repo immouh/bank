@@ -191,7 +191,14 @@ public class Client {
 
     /** Crédite le Livret A. L'épargne ne se débite jamais vers l'extérieur. */
     public void crediterLivretA(BigDecimal montant) {
+        // LE LIVRET D'ABORD, le montant ensuite. Un crédit à la fois sur un
+        // livret ABSENT ET d'un montant invalide doit signaler l'absence :
+        // c'est le défaut le plus fondamental des deux, et corriger le montant
+        // ne mènerait nulle part tant qu'il n'y a pas de livret à créditer.
+        // L'ordre inverse taisait la cause première derrière une erreur de
+        // saisie.
+        Compte livretA = getLivretA().orElseThrow(LivretAAbsentException::new);
         BigDecimal m = Montants.exigerPositif(montant);
-        getLivretA().orElseThrow(LivretAAbsentException::new).crediter(m);
+        livretA.crediter(m);
     }
 }
