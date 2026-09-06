@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>bank-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>bank-web</artifactId>
+    <name>bank-web</name>
+    <packaging>jar</packaging>
+
+    <!--
+        Frontal REST : troisième module, au même rang que bank-swing.
+
+        LE SENS DES DÉPENDANCES NE CHANGE PAS — bank-web dépend de bank-core,
+        jamais l'inverse, et n'a AUCUN lien avec bank-swing. Les deux frontaux
+        sont indépendants et consomment le même coeur : c'est exactement ce que
+        l'étanchéité des couches du chantier 3 avait été construite pour
+        permettre, et c'est ce qui fait que cette phase n'a pas eu à toucher
+        une seule ligne du coeur.
+
+        AUCUNE ANNOTATION SPRING DANS bank-core — Spring n'est une dépendance
+        QUE de ce module. Le câblage se fait par des @Bean qui appellent les
+        constructeurs existants (voir config/BeansCoreConfig).
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>bank-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- JWT : API compilée, implémentation et sérialiseur au runtime. -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+        </dependency>
+
+        <!--
+            Driver H2 au RUNTIME, comme dans bank-swing : c'est le point
+            d'assemblage qui choisit la base concrète, le coeur ne compile
+            contre aucun driver. En scope compile ici plutôt que runtime,
+            parce que BeansCoreConfig construit l'URL de la base.
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Produit un jar exécutable autonome (java -jar). -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,20 @@
+# Configuration du frontal REST.
+server:
+  port: 8080
+
+bank:
+  base:
+    # Même base que bank-swing : les deux frontaux lisent les mêmes comptes.
+    # H2 en mode fichier ne supporte qu'un seul processus à la fois — lancer
+    # les deux en même temps échouera à l'ouverture, c'est attendu.
+    url: jdbc:h2:./data/bank
+  jwt:
+    # SECRET DE DÉVELOPPEMENT, à remplacer par une variable d'environnement
+    # (BANK_JWT_SECRET) en dehors d'un poste de travail : quiconque le connaît
+    # peut forger un jeton pour n'importe quel RIB. 32 caractères minimum,
+    # HS256 refuse plus court.
+    secret: ${BANK_JWT_SECRET:secret-de-developpement-a-remplacer-32c}
+
+logging:
+  level:
+    com.example.bank: INFO

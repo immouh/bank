@@ -13,6 +13,7 @@
     <modules>
         <module>bank-core</module>
         <module>bank-swing</module>
+        <module>bank-web</module>
     </modules>
 
     <properties>
@@ -21,10 +22,49 @@
         <junit.version>5.9.2</junit.version>
         <h2.version>2.3.232</h2.version>
         <jbcrypt.version>0.4</jbcrypt.version>
+        <!--
+            Spring Boot 3.2.0 : dernière ligne compatible Java 21 dont les
+            artefacts web ET security sont disponibles ici. La version est
+            épinglée au parent pour que les trois modules ne puissent pas
+            diverger, comme junit et h2 le sont déjà.
+        -->
+        <spring-boot.version>3.2.0</spring-boot.version>
+        <jjwt.version>0.11.5</jjwt.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--
+                BOM Spring Boot : importé, PAS hérité. Le parent du projet
+                reste bank-parent — un projet multi-module ne peut avoir
+                qu'un parent, et c'est le nôtre qui porte le JDK 21 et
+                l'épinglage de surefire. L'import du BOM donne quand même
+                la gestion de versions de tout l'écosystème Spring.
+            -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
             <dependency>
                 <groupId>com.example</groupId>
                 <artifactId>bank-core</artifactId>
